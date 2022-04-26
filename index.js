@@ -79,17 +79,17 @@ discord_client.on('messageCreate', async message => {
             axios.post(OAI_ENDPOINT_DAVINCI, data, config)
                 .then(res => {
                     if(res.status == 200)
-                        message.channel.send(res.data.choices[0].text);
+                        message.reply(res.data.choices[0].text);
                     else
-                        message.channel.send("❌ Something went wrong while making your request. ❌");
+                        message.reply("❌ Something went wrong while making your request. ❌");
                 }).catch(error => {
                     if(error.response.status == 401)
-                        message.channel.send("❌ Failed to authenticate successfully. Your API key may be malformed. Send a PM with your corrected API key. ❌");
+                        message.reply("❌ Failed to authenticate successfully. Your API key may be malformed. Send a PM with your corrected API key. ❌");
                 });
         }
         // Otherwise, send instructions for registering
         else {
-            message.channel.send("❌ You have not registered an API key. Sending instructions in DM. ❌");
+            message.reply("❌ You have not registered an API key. Sending instructions in DM. ❌");
             message.author.send(
                 "**Registration Steps**\n" +
                 "- Register an account at <https://auth0.openai.com/u/signup/>\n" +
