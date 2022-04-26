@@ -186,9 +186,9 @@ discord_client.on("interactionCreate", async (interaction) => {
         if (user_data != {}) {
             interaction.reply(
                 " -- Current Settings -- \n" +
-                "**Model**: " + d["model"] + "\n" +
-                "**Token Limit**: " + d["token_limit"] + "\n" +
-                "**Temperature**: " + d["temperature"]
+                "**Model**: " + user_data["model"] + "\n" +
+                "**Token Limit**: " + user_data["token_limit"] + "\n" +
+                "**Temperature**: " + user_data["temperature"]
             );
         }
     }
