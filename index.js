@@ -2,8 +2,6 @@
 import { Routes } from 'discord-api-types/v9';
 import { Client, Intents } from 'discord.js';
 import { REST } from '@discordjs/rest'
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { Configuration, OpenAIApi } from 'openai';
 import { join, dirname } from 'path'
 import { Low, JSONFile } from 'lowdb'
 import { fileURLToPath } from 'url'
@@ -38,11 +36,7 @@ const db = new Low(adapter)
 
 // Wait for file and write default contents if none exist
 await db.read();
-db.data ||= {
-    people: {
-
-    }
-}
+db.data ||= { people: {} };
 await db.write();
 
 // Listener for messages
