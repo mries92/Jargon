@@ -14,14 +14,8 @@ import axios from 'axios';
 dotenv.config();
 
 // Constants
-const DISCORD_API_URL = "https://discord.com/api";
 const OAI_ENDPOINT_DAVINCI = 'https://api.openai.com/v1/engines/text-davinci-002/completions';
 const OAI_ENDPOINT_CURIE = 'https://api.openai.com/v1/engines/text-curie-001/completions';
-const oai_configuration = new Configuration({
-    apiKey: process.env.OPENAI_TOKEN
-});
-const openai = new OpenAIApi(oai_configuration);
-await openai.listEngines();
 const discord_client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES], partials: ["CHANNEL"] });
 discord_client.login(process.env.DISCORD_TOKEN);
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
