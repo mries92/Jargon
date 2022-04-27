@@ -12,6 +12,11 @@ import axios from 'axios';
 // Init .env
 dotenv.config();
 
+const REGISTRATION_INSTRUCTIONS = "**Registration Steps**\n" +
+    "- Register an account at <https://auth0.openai.com/u/signup/>\n" +
+    "- Create an API key here <https://beta.openai.com/account/api-keys>\n" +
+    "- Send a DM to me including only your API key";
+
 // Constants
 const OAI_ENDPOINT_DAVINCI = 'https://api.openai.com/v1/engines/text-davinci-002/completions';
 const OAI_ENDPOINT_CURIE = 'https://api.openai.com/v1/engines/text-curie-001/completions';
@@ -155,12 +160,7 @@ discord_client.on('messageCreate', async message => {
         // Otherwise, send instructions for registering
         else {
             message.reply("❌ You have not registered an API key. Sending instructions in DM. ❌");
-            message.author.send(
-                "**Registration Steps**\n" +
-                "- Register an account at <https://auth0.openai.com/u/signup/>\n" +
-                "- Create an API key here <https://beta.openai.com/account/api-keys>\n" +
-                "- Send a DM to me including only your API key"
-            );
+            message.reply(REGISTRATION_INSTRUCTIONS);
         }
     }
 })
@@ -185,35 +185,42 @@ discord_client.on("interactionCreate", async (interaction) => {
     else if (interaction.commandName === 'current_settings') {
         if (user_data != {}) {
             interaction.reply(
-                " -- Current Settings -- \n" +
+                " ⚙️ **Current Settings** ⚙️ \n" +
                 "**Model**: " + user_data["model"] + "\n" +
                 "**Token Limit**: " + user_data["token_limit"] + "\n" +
                 "**Temperature**: " + user_data["temperature"]
             );
         }
     }
-    else if (interaction.commandName === 'model') {
-        let model = interaction.options.get("type").value;
-        if (model === "davinci" || model === "curie" || model === "babbage" || model === "ada") {
-            db.data.people[interaction.user.id].model = model;
-            interaction.reply("✅ Model set ✅");
-            needs_write = true;
-        } else {
-            interaction.reply("❌ Invalid model specified ❌");
+    
+    if (db.data.people[user_id] != {}) {
+        if (interaction.commandName === 'model') {
+            let model = interaction.options.get("type").value;
+            if (model === "davinci" || model === "curie" || model === "babbage" || model === "ada") {
+                db.data.people[interaction.user.id].model = model;
+                interaction.reply("✅ Model set ✅");
+                needs_write = true;
+            } else {
+                interaction.reply("❌ Invalid model specified ❌");
+            }
         }
+        else if (interaction.commandName == 'token_limit') {
+            let limit = interaction.options.get("limit").value;
+            db.data.people[user_id].token_limit = limit;
+            interaction.reply("✅ Token limit set ✅");
+            needs_write = true;
+        }
+        else if (interaction.commandName == 'temperature') {
+            let temperature = interaction.options.get("temp").value;;
+            db.data.people[user_id].temperature = temperature;
+            interaction.reply("✅ Temperature set ✅");
+            needs_write = true;
+        }
+    } else {
+        interaction.reply("❌ You have not registered an API key. Sending instructions in DM. ❌");
+        interaction.reply(REGISTRATION_INSTRUCTIONS);
     }
-    else if (interaction.commandName == 'token_limit') {
-        let limit = interaction.options.get("limit").value;
-        db.data.people[user_id].token_limit = limit;
-        interaction.reply("✅ Token limit set ✅");
-        needs_write = true;
-    }
-    else if (interaction.commandName == 'temperature') {
-        let temperature = interaction.options.get("temp").value;;
-        db.data.people[user_id].temperature = temperature;
-        interaction.reply("✅ Temperature set ✅");
-        needs_write = true;
-    }
+
     if (needs_write)
         db.write();
 });
