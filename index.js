@@ -160,7 +160,7 @@ discord_client.on('messageCreate', async message => {
         // Otherwise, send instructions for registering
         else {
             message.reply("❌ You have not registered an API key. Sending instructions in DM. ❌");
-            message.reply(REGISTRATION_INSTRUCTIONS);
+            message.author.send(REGISTRATION_INSTRUCTIONS);
         }
     }
 })
@@ -182,8 +182,8 @@ discord_client.on("interactionCreate", async (interaction) => {
         );
     }
     else if (interaction.commandName === 'register') {
-            message.reply("❌ To use this bot you will need to register an API key. Sending instructions in DM. ❌");
-            message.reply(REGISTRATION_INSTRUCTIONS);
+            intearction.reply("❌ To use this bot you will need to register an API key. Sending instructions in DM. ❌");
+            interaction.user.send(REGISTRATION_INSTRUCTIONS);
     }
     else if (user_id in db.data.people) {
         if (interaction.commandName === 'current_settings') {
@@ -220,7 +220,7 @@ discord_client.on("interactionCreate", async (interaction) => {
         }
     } else {
         interaction.reply("❌ You have not registered an API key. Sending instructions in DM. ❌");
-        interaction.reply(REGISTRATION_INSTRUCTIONS);
+        interaction.user.send(REGISTRATION_INSTRUCTIONS);
     }
 
     if (needs_write)
