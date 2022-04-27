@@ -169,6 +169,7 @@ discord_client.on('messageCreate', async message => {
 discord_client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) return; // Break if not a command
 
+    db.read();
     let user_id = interaction.user.id;
     let user_data = db.data.people[user_id];
     let needs_write = false;
@@ -181,20 +182,21 @@ discord_client.on("interactionCreate", async (interaction) => {
         );
     }
     else if (interaction.commandName === 'register') {
+            message.reply("❌ To use this bot you will need to register an API key. Sending instructions in DM. ❌");
+            message.reply(REGISTRATION_INSTRUCTIONS);
     }
-    else if (interaction.commandName === 'current_settings') {
-        if (user_data != {}) {
-            interaction.reply(
-                " ⚙️ **Current Settings** ⚙️ \n" +
-                "**Model**: " + user_data["model"] + "\n" +
-                "**Token Limit**: " + user_data["token_limit"] + "\n" +
-                "**Temperature**: " + user_data["temperature"]
-            );
+    else if (user_id in db.data.people) {
+        if (interaction.commandName === 'current_settings') {
+            if (user_data != {}) {
+                interaction.reply(
+                    " ⚙️ **Current Settings** ⚙️ \n" +
+                    "**Model**: " + user_data["model"] + "\n" +
+                    "**Token Limit**: " + user_data["token_limit"] + "\n" +
+                    "**Temperature**: " + user_data["temperature"]
+                );
+            }
         }
-    }
-    
-    if (db.data.people[user_id] != {}) {
-        if (interaction.commandName === 'model') {
+        else if (interaction.commandName === 'model') {
             let model = interaction.options.get("type").value;
             if (model === "davinci" || model === "curie" || model === "babbage" || model === "ada") {
                 db.data.people[interaction.user.id].model = model;
